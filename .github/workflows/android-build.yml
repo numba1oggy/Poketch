@@ -1,0 +1,31 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Cache Library
+        uses: actions/cache@v3
+        with:
+          path: Poketch/Library
+          key: Library-${{ hashFiles('Poketch/Assets/**', 'Poketch/Packages/**', 'Poketch/ProjectSettings/**') }}
+
+      - name: Build Unity project
+        uses: game-ci/unity-builder@v4
+        with:
+          projectPath: Poketch
+          unityVersion: 2020.3.12f1
+          targetPlatform: Android
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: APK
+          path: build
